@@ -314,3 +314,4 @@ class EventServiceImplTest {
 		assertEquals(null, eventServiceImpl.deleteEvent(eventID));
 	}
 }
+
