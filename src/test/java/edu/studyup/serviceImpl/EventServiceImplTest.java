@@ -105,18 +105,6 @@ class EventServiceImplTest {
 		assertEquals(newName, DataStorage.eventData.get(eventID).getName());
 	}
 	
-	// Can string be set to null -- check if this 
-	// test case should throw an error
-//	@Test
-//	void testUpdateEvent_NullString_BadCase() throws StudyUpException {
-//		int eventID = 1;
-//		String newName = null;
-//		//Assertions.assertThrows(StudyUpException.class, () -> {
-//		eventServiceImpl.updateEventName(eventID, newName);			
-//		assertTrue(DataStorage.eventData.get(eventID).getName() == null);
-//		//});
-//	}
-	
 	/*
 	 * Updates event name and then changes the event ID
 	 * Checks to see if name doesn't get overwritten as 
@@ -139,6 +127,24 @@ class EventServiceImplTest {
 		event1.setEventID(5);
 		DataStorage.eventData.put(event1.getEventID(), event1);
 		assertEquals(newName, DataStorage.eventData.get(5).getName());
+	}
+	
+	/*
+	 * Checks to see if update event can take max
+	 * string character of 20.
+	 * Test should pass but it does not.
+	 * Bug found.
+	 */
+	@Test
+	void testUpdateEvent_CheckMaxChar_BadCase() {
+		Event event = new Event();
+		event.setEventID(3);
+		event.setName("Original String");
+		
+		String newString = "This has 20 chars!!!";
+		
+		DataStorage.eventData.put(event.getEventID(), event);
+		assertEquals(newString, DataStorage.eventData.get(3).getName());
 	}
 	
 	/*
