@@ -136,7 +136,7 @@ class EventServiceImplTest {
 	 * Bug found.
 	 */
 	@Test
-	void testUpdateEvent_CheckMaxChar_BadCase() {
+	void testUpdateEvent_CheckMaxChar_BadCase() throws StudyUpException {
 		Event event = new Event();
 		event.setEventID(3);
 		event.setName("Original String");
@@ -144,6 +144,9 @@ class EventServiceImplTest {
 		String newString = "This has 20 chars!!!";
 		
 		DataStorage.eventData.put(event.getEventID(), event);
+
+		eventServiceImpl.updateEventName(3, newString);
+		
 		assertEquals(newString, DataStorage.eventData.get(3).getName());
 	}
 	
@@ -237,9 +240,11 @@ class EventServiceImplTest {
 		
 		eventServiceImpl.addStudentToEvent(student1, newEventID);		
 		eventServiceImpl.addStudentToEvent(student2, newEventID);		
-		eventServiceImpl.addStudentToEvent(student3, newEventID);		
 	
-		assertTrue(DataStorage.eventData.get(newEventID).getStudents().size() <= 2);
+		Assertions.assertThrows(StudyUpException.class, () -> {
+			eventServiceImpl.addStudentToEvent(student3, newEventID);		
+		});	
+		//assertTrue(DataStorage.eventData.get(newEventID).getStudents().size() <= 2);
 	}
 	
 	/*
@@ -328,7 +333,8 @@ class EventServiceImplTest {
 
 		// assertEquals expect 3 -- the event created in @BeforeAll
 		// and the two events created just now
-		assertEquals(3, eventServiceImpl.getActiveEvents().size());
+		
+		assertEquals(2, eventServiceImpl.getActiveEvents().size());
 	}
 	
 	/*
