@@ -73,7 +73,7 @@
 			    </executions>
 			</plugin>
 			<plugin>
-			    <groupID>com.github.spotbugs</groupID>
+			    <groupId>com.github.spotbugs</groupId>
 			    <artifactId>spotbugs-maven-plugin</artifactId>
   			    <version>3.1.10</version>
   			    <dependencies>
