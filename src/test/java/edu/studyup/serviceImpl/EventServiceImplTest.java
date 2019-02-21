@@ -75,18 +75,28 @@ class EventServiceImplTest {
 			eventServiceImpl.updateEventName(eventID, "Renamed Event 3");
 		  });
 	}
-
+	
 	// Starting test cases for homework 2
+	
+	/*
+	 * Checks if event name can be a a string with
+	 * over 20 characters (27 to be exact).
+	 * Test should throw exception and it does
+	 */
 	@Test
-	void testUpdateEvent_OverMaxString_BadCase() throws StudyUpException {
+	void testUpdateEvent_OverMaxString_BadCase() {
 		int eventID = 1;
-		String newName = "12345678901234567890";
-		eventServiceImpl.updateEventName(eventID, newName);
+		String newName = "New Event Name Char Over 20";
 		Assertions.assertThrows(StudyUpException.class, () -> {
 			eventServiceImpl.updateEventName(eventID, newName);
 		});	
 	}
 	
+	/*
+	 * Checks if event name can be an empty string.
+	 * Does overwrite event name with empty string.
+	 * Test should pass and it does
+	 */
 	@Test
 	void testUpdateEvent_EmptyString_GoodCase() throws StudyUpException {
 		int eventID = 1;
@@ -95,18 +105,12 @@ class EventServiceImplTest {
 		assertEquals(newName, DataStorage.eventData.get(eventID).getName());
 	}
 	
-	// Can string be set to null -- check if this 
-	// test case should throw an error
-	@Test
-	void testUpdateEvent_NullString_BadCase() throws StudyUpException {
-		int eventID = 1;
-		String newName = null;
-		//Assertions.assertThrows(StudyUpException.class, () -> {
-		eventServiceImpl.updateEventName(eventID, newName);			
-		assertTrue(DataStorage.eventData.get(eventID).getName() == null);
-		//});
-	}
-	
+	/*
+	 * Updates event name and then changes the event ID
+	 * Checks to see if name doesn't get overwritten as 
+	 * it should have the same name.
+	 * Test should pass and it does
+	 */
 	@Test
 	void testUpdateEvent_ChangeIDAgain_GoodCase() throws StudyUpException {
 		int eventID = 2;
@@ -117,7 +121,7 @@ class EventServiceImplTest {
 		
 		DataStorage.eventData.put(event1.getEventID(), event1);
 		
-		eventServiceImpl.updateEventName(eventID, newName);
+		eventServiceImpl.updateEventName(eventID, newName);		
 		assertEquals(newName, DataStorage.eventData.get(eventID).getName());
 		
 		event1.setEventID(5);
@@ -125,6 +129,47 @@ class EventServiceImplTest {
 		assertEquals(newName, DataStorage.eventData.get(5).getName());
 	}
 	
+	/*
+	 * Checks to see if update event can take max
+	 * string character of 20.
+	 * Test should pass but it does not.
+	 * Bug found.
+	 */
+	@Test
+	void testUpdateEvent_CheckMaxChar_BadCase() throws StudyUpException {
+		Event event = new Event();
+		event.setEventID(3);
+		event.setName("Original String");
+		
+		String newString = "This has 20 chars!!!";
+		
+		DataStorage.eventData.put(event.getEventID(), event);
+
+		eventServiceImpl.updateEventName(3, newString);
+		
+		assertEquals(newString, DataStorage.eventData.get(3).getName());
+	}
+	
+	/*
+	 * Checks to see if function returns correct Event
+	 * Test should pass and it does
+	 */
+	@Test
+	void testUpdateEvent_ReturnValue_GoodCase() throws StudyUpException {
+		int eventID = 2;
+		String newName = "Updated Event Name";
+		Event event = new Event();
+		event.setEventID(eventID);
+		event.setName("Original Name");
+		
+		DataStorage.eventData.put(event.getEventID(), event);
+		
+		assertEquals(event, eventServiceImpl.updateEventName(eventID, newName));
+	}
+	/*
+	 * Creates new event and updates the name
+	 * Test should pass and it does
+	 */
 	@Test
 	void testUpdateEvent_CreateNewEvent_GoodCase() throws StudyUpException {
 		int newEventID = 5;
@@ -142,6 +187,11 @@ class EventServiceImplTest {
 		assertEquals("Updated Event 2", DataStorage.eventData.get(newEventID).getName());
 	}
 	
+	/*
+	 * Checks to see if function can overwrite an event
+	 * that does not have an initialized name.
+	 * Test should pass and it does
+	 */
 	@Test
 	void testUpdateEvent_OverwriteEmptyName_GoodCase() throws StudyUpException {
 		int event1ID = 2;
@@ -154,6 +204,11 @@ class EventServiceImplTest {
 		assertEquals("No original name", DataStorage.eventData.get(event1ID).getName());
 	}
 	
+	/*
+	 * Checks to see if function can add more than 2 students.
+	 * Test should fail and it does.
+	 * Found bug.
+	 */
 	@Test
 	void testAddStudent_AddMultStudents_BadCase() throws StudyUpException {
 		int newEventID = 11;
@@ -185,12 +240,18 @@ class EventServiceImplTest {
 		
 		eventServiceImpl.addStudentToEvent(student1, newEventID);		
 		eventServiceImpl.addStudentToEvent(student2, newEventID);		
-		eventServiceImpl.addStudentToEvent(student3, newEventID);		
 	
-
-		assertTrue(DataStorage.eventData.get(newEventID).getStudents().size() <= 2);
+		Assertions.assertThrows(StudyUpException.class, () -> {
+			eventServiceImpl.addStudentToEvent(student3, newEventID);		
+		});	
+		//assertTrue(DataStorage.eventData.get(newEventID).getStudents().size() <= 2);
 	}
 	
+	/*
+	 * Checks to see if function can add student when
+	 * student list is not initialized.
+	 * Test should pass and it does
+	 */
 	@Test
 	void testAddStudent_NullStudentList_GoodCase() throws StudyUpException {
 		int newEventID = 9;
@@ -212,6 +273,11 @@ class EventServiceImplTest {
 		assertEquals(event2.getStudents(), DataStorage.eventData.get(newEventID).getStudents());
 	}
 	
+	/*
+	 * Checks to see if function can add student if 
+	 * first name is null.
+	 * Test should pass and it does
+	 */
 	@Test
 	void testAddStudent_NullStudentFirstName_GoodCase() throws StudyUpException {
 		int newEventID = 7;
@@ -229,6 +295,11 @@ class EventServiceImplTest {
 		assertEquals(null, DataStorage.eventData.get(newEventID).getStudents().get(0).getFirstName());
 	}
 	
+	/*
+	 * Checks to see if function can add student to 
+	 * an event that does not exist.
+	 * Test should throw exception and it does
+	 */
 	@Test
 	void testAddStudent_WrongEvent_BadCase() {
 		Student student = new Student();
@@ -237,8 +308,14 @@ class EventServiceImplTest {
 			eventServiceImpl.addStudentToEvent(student, 2);
 		});
 	}
-	
-	// Confirm how to set Date to future date
+
+	/*
+	 * Checks to see if function can detect two newly 
+	 * created future events. 
+	 * Test expects function to return 3 (two created inside
+	 * and one created in @BeforeAll)
+	 * Test should pass and it does
+	 */
 	@Test 
 	void testActiveData_TwoActiveEvents_GoodCase() {
 		Event event1 = new Event();
@@ -256,9 +333,41 @@ class EventServiceImplTest {
 
 		// assertEquals expect 3 -- the event created in @BeforeAll
 		// and the two events created just now
-		assertEquals(3, eventServiceImpl.getActiveEvents().size());
+		assertTrue(eventServiceImpl.getActiveEvents().contains(event1));
+		assertTrue(eventServiceImpl.getActiveEvents().contains(event2));
+	
+		//assertEquals(2, eventServiceImpl.getActiveEvents().size());
+	}
+	
+	/*
+	 * Checks to see both events are in active event
+	 * Test should pass and it does
+	 */
+	@Test 
+	void testActiveData_ContainEvents_GoodCase() {
+		Event event1 = new Event();
+		event1.setEventID(10);
+		Date date1 = new Date(190, 1, 1);
+		event1.setDate(date1);
+
+		Event event2 = new Event();
+		event2.setEventID(11);
+		Date date2 = new Date(230, 2, 3);
+		event2.setDate(date2);
+		
+		DataStorage.eventData.put(event1.getEventID(), event1);
+		DataStorage.eventData.put(event2.getEventID(), event2);
+
+		assertTrue(eventServiceImpl.getActiveEvents().contains(event1));
+		assertTrue(eventServiceImpl.getActiveEvents().contains(event2));
 	}
 
+	/*
+	 * Checks to see if function will detect a past event.
+	 * Should not account past event.
+	 * Test expects a return of 3 but gets 4.
+	 * Test failed, found bug
+	 */
 	@Test 
 	void testActiveData_OnePastEvent_BadCase() {
 		Event event1 = new Event();
@@ -285,7 +394,10 @@ class EventServiceImplTest {
 		assertEquals(3, eventServiceImpl.getActiveEvents().size());
 	}
 	
-	// How to set Date to a past date?	
+	/*
+	 * Checks to see if function can detect past event.
+	 * Test expects to return 1 and it does
+	 */
 	@Test
 	void testPastEvent_GoodCase() {
 		Event event1 = new Event();
@@ -298,6 +410,10 @@ class EventServiceImplTest {
 		assertEquals(1, eventServiceImpl.getPastEvents().size());
 	}
 	
+	/*
+	 * Checks to see if function deletes an event that exists
+	 * Should return event that it deleted and it does
+	 */
 	@Test
 	void testDeleteEvent_GoodCase() {
 		Event event1 = new Event();
@@ -308,6 +424,11 @@ class EventServiceImplTest {
 		assertEquals(event1, eventServiceImpl.deleteEvent(99));
 	}
 	
+	/*
+	 * Checks to see if function will delete an event
+	 * that does not exist. Expected to return null.
+	 * Test passes. 
+	 */
 	@Test
 	void testDeleteEvent_WrongEvent_BadCase() {
 		int eventID = 88;

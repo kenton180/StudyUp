@@ -44,13 +44,14 @@ public class Event {
 	public void setStudents(List<Student> students) {
 		this.students = students;
 	}
-
+	
 	public Date getDate() {
-		return date;
+		return (Date) this.date.clone();
+		
 	}
 
 	public void setDate(Date date) {
-		this.date = date;
+		this.date = new Date(date.getTime());
 	}
 
 	public int getEventID() {
